@@ -4,7 +4,7 @@ func() {
   echo "TIMEZONE =" "$(timedatectl | grep "Time zone" | awk '{print $3, $4, $5}')"
   echo "USER = $(whoami)"
   echo "OS = $(hostnamectl | grep "Operating System" | cut -b 19-)" #$(cat /etc/issue)
-  echo "DATE = $(date | cut -d " " -f 2-5)"
+  echo "DATE = $(date -R | cut -d " " -f 2-5)"
   echo "UPTIME = $(uptime -p)"
   echo "UPTIME_SEC = $(awk '{print $1,"sec"}' /proc/uptime)"
   echo "IP = $(hostname -I)"
