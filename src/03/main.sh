@@ -39,7 +39,7 @@ declare -a data=(
   "$(timedatectl | grep "Time zone" | awk '{print $3, $4, $5}')"
   "$(whoami)"
   "$(hostnamectl | grep "Operating System" | cut -b 19-)" #$(cat /etc/issue)
-  "$(date | cut -d " " -f 2-5)"
+  "$(date -R | cut -d " " -f 2-5)"
   "$(uptime -p)"
   "$(awk '{print $1,"sec"}' /proc/uptime)"
   "$(hostname -I)"
