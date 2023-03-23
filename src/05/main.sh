@@ -44,20 +44,24 @@ echo "Executable files = $exe_files"
 echo "Log files (with the extension .log) = $log_files"
 echo "Archive files = $archive_files"
 echo "Symbolic links = $sym_links"
-# Total number of folders (including all nested ones) = 6
-# TOP 5 folders of maximum size arranged in descending order (path and size):
-# 1 - /var/log/one/, 100 GB
-# 2 - /var/log/two/, 100 MB
-# etc up to 5
-# Total number of files = 30
-# Number of:
-# Configuration files (with the .conf extension) = 1
-# Text files = 10
-# Executable files = 5
-# Log files (with the extension .log) = 2
-# Archive files = 3
-# Symbolic links = 4
-# TOP 10 files of maximum size arranged in descending order (path, size and type):
+
+echo "TOP 10 files of maximum size arranged in descending order (path, size and type): "
+# top_files=$(find "$dir_path" -type f -printf "%s %p\n" | sort -rh | head -n 10)
+# while read -r line; do
+#   size=$(echo "$line" | awk '{print $1}')
+#   path=$(echo "$line" | awk '{print $2}')
+#   ext=$(echo "$path" | awk -F . '{if (NF>1) {print $NF}}')
+#   echo "$path, $size, $ext"
+# done <<<"$top_files"
+top_files="$(find $1 -type f -exec ls -sh {} \; | sort -nr | head -10 | awk '{print $2}')"
+top_files_size="$(find $1 -type f -exec ls -sh {} \; | sort -nr | head -10 | awk '{print $1}')"
+top_files_type="$(find $1 -type f -exec ls -sh {} \; | sort -nr | head -10 | awk -F. '{print $NF}')"
+for i in {0..10}; do
+  if [[ -z "${top_files[i]}" ]]; then
+    break
+  fi
+  echo "$(($i)) - ${top_files[$i]}, ${top_files_size[$i]}, ${top_files_type[$i]}"
+done
 # 1 - /var/log/one/one.exe, 10 GB, exe
 # 2 - /var/log/two/two.log, 10 MB, log
 # etc up to 10
