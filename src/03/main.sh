@@ -59,8 +59,13 @@ function print_data {
 }
 
 for i in "$@"; do
-  if [[ "$i" > 6 || "$i" < 1 ]]; then
-    echo "Incorrect arguments(color number is in range 1-6)"
+  if [[ "$i" == *[[:digit:]]* ]]; then
+    if [[ "$i" -gt 6 || "$i" -lt 1 ]]; then
+      echo "Incorrect arguments(color number is in range 1-6)"
+      exit
+    fi
+  else
+    echo "All arguments must be a digit number"
     exit
   fi
 done

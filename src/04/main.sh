@@ -1,11 +1,7 @@
 #!/bin/bash
 
 source ./color.conf
-
-default_column1_background=6
-default_column1_font_color=1
-default_column2_background=3
-default_column2_font_color=2
+source ./default_color.conf
 
 column1_background=${column1_background:=${default_column1_background}}
 column1_font_color=${column1_font_color:=${default_column1_font_color}}
@@ -20,7 +16,8 @@ color_list=(
 )
 
 function default_colors() {
-  echo "Setting default colors..."
+  echo "Setting the default colors..."
+  FLAG_DEFAULT=1
   column1_background=${default_column1_background}
   column1_font_color=${default_column1_font_color}
   column2_background=${default_column2_background}
@@ -30,28 +27,33 @@ function default_colors() {
 if [[ $# -gt 0 ]]; then
   echo "Too few arguments"
   default_colors
-elif [[ ${column1_background} -eq ${column1_font_color} || ${column2_background} -eq ${column2_font_color} ]]; then
+fi
+if [[ ${column1_background} -eq ${column1_font_color} || ${column2_background} -eq ${column2_font_color} ]]; then
   echo "Color of text and background should not match"
   default_colors
 fi
 
 for i in "${!color_list[@]}"; do
-  if [[ ${color_list[$i]} > 6 || ${color_list[$i]} < 1 ]]; then
-    echo "Incorrect arguments(color number must be in range 1-6)"
-    default_colors
-  elif [[ ${color_list[$i]} != *[[:digit:]]* ]]; then
+  if [[ ${color_list[$i]} == *[[:digit:]]* ]]; then
+    if [[ ${color_list[$i]} -gt 6 || ${color_list[$i]} -lt 1 ]]; then
+      echo "Incorrect arguments(color number must be in range 1-6)"
+      default_colors
+    fi
+  else
     echo "All arguments must be a digit number"
     default_colors
   fi
 done
 
-function print_colors() {
-  echo ${column1_background}
-  echo ${column1_font_color}
-  echo ${column2_background}
-  echo ${column2_font_color}
-}
-print_colors
+NAME_COLOR=(
+  default
+  white
+  red
+  green
+  blue
+  purple
+  black
+)
 
 function pick_color() {
   case "$1" in
@@ -64,10 +66,10 @@ function pick_color() {
   esac
 }
 
-column1_background=$(pick_color ${column1_background} 4)
-column1_font_color=$(pick_color ${column1_font_color} 3)
-column2_background=$(pick_color ${column2_background} 4)
-column2_font_color=$(pick_color ${column2_font_color} 3)
+column1_bg=$(pick_color ${column1_background} 4)
+column1_font=$(pick_color ${column1_font_color} 3)
+column2_bg=$(pick_color ${column2_background} 4)
+column2_font=$(pick_color ${column2_font_color} 3)
 
 declare -a keys=(
   "HOSTNAME"
@@ -107,8 +109,25 @@ declare -a data=(
 
 function print_data {
   for i in "${!keys[@]}"; do
-    echo -e "$column1_background$column1_font_color${keys[$i]}\033[0m" = "$column2_background$column2_font_color${data[$i]}\033[0m"
+    echo -e "$column1_bg$column1_font${keys[$i]}\033[0m" = "$column2_bg$column2_font${data[$i]}\033[0m"
   done
 }
 
+function print_colors {
+  if [[ $FLAG_DEFAULT -eq 0 ]]; then
+
+    echo -e "Column 1 background = ${column1_background} (${NAME_COLOR[column1_background]})"
+    echo -e "Column 1 font color = ${column1_font_color} (${NAME_COLOR[column1_font_color]})"
+    echo -e "Column 2 background = ${column2_background} (${NAME_COLOR[column2_background]})"
+    echo -e "Column 2 font color = ${column2_font_color} (${NAME_COLOR[column2_font_color]})"
+  else
+    echo "Column 1 background = default (${NAME_COLOR[$default_column1_background]})"
+    echo "Column 1 font color = default (${NAME_COLOR[$default_column1_font_color]})"
+    echo "Column 2 background = default (${NAME_COLOR[$default_column2_background]})"
+    echo "Column 2 font color = default (${NAME_COLOR[$default_column2_font_color]})"
+  fi
+}
+
 print_data
+echo
+print_colors
