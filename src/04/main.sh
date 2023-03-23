@@ -3,16 +3,11 @@
 source ./color.conf
 source ./default_color.conf
 
-column1_background=${column1_background:=${default_column1_background}}
-column1_font_color=${column1_font_color:=${default_column1_font_color}}
-column2_background=${column2_background:=${default_column2_background}}
-column2_font_color=${column2_font_color:=${default_column2_font_color}}
-
 color_list=(
-  $column1_background
-  $column1_font_color
-  $column2_background
-  $column2_font_color
+  column1_background=${column1_background:=${default_column1_background}}
+  column1_font_color=${column1_font_color:=${default_column1_font_color}}
+  column2_background=${column2_background:=${default_column2_background}}
+  column2_font_color=${column2_font_color:=${default_column2_font_color}}
 )
 
 function default_colors() {
