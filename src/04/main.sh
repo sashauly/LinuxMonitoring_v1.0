@@ -3,18 +3,32 @@
 source ./color.conf
 source ./default_color.conf
 
-color_list[0]=$column1_background
-color_list[1]=$column1_font_color
-color_list[2]=$column2_background
-color_list[3]=$column2_font_color
+color_list=(
+  $column1_background
+  $column1_font_color
+  $column2_background
+  $column2_font_color
+)
 
-default_color_list[0]=$default_column1_background
-default_color_list[1]=$default_column1_font_color
-default_color_list[2]=$default_column2_background
-default_color_list[3]=$default_column2_font_color
+default_color_list=(
+  $default_column1_background
+  $default_column1_font_color
+  $default_column2_background
+  $default_column2_font_color
+)
+
+name_color=(
+  default
+  white
+  red
+  green
+  blue
+  purple
+  black
+)
 
 function default_colors() {
-  echo "Setting default colors..."
+  echo "Setting the default colors..."
   column1_background=${default_column1_background}
   column1_font_color=${default_column1_font_color}
   column2_background=${default_column2_background}
@@ -23,7 +37,10 @@ function default_colors() {
 
 for ((i = 0; i < 4; i++)); do
   if [[ ${color_list[$i]} =~ ^[1-6$]+$ ]]; then
-    :
+    if [[ ${color_list[$i]} -gt 6 || ${color_list[$i]} -lt 1 ]]; then
+      echo "Incorrect arguments(color number must be in range 1-6)"
+      color_list[$i]=${default_color_list[$i]}
+    fi
   else
     color_list[$i]=${default_color_list[$i]}
   fi
@@ -42,29 +59,6 @@ if [[ ${column2_background} -eq ${column2_font_color} ]]; then
   color_list[3]=${default_color_list[3]}
 fi
 
-# for i in "${!color_list[@]}"; do
-#   if [[ ${color_list[$i]} == *[[:digit:]]* ]]; then
-#     if [[ ${color_list[$i]} -gt 6 || ${color_list[$i]} -lt 1 ]]; then
-#       echo "Incorrect arguments(color number must be in range 1-6)"
-#       color_list[$i]=${default_color_list[$i]}
-#     fi
-#   else
-#     echo "All arguments must be a digit number"
-#     color_list[$i]=${default_color_list[$i]}
-#   fi
-
-# done
-
-NAME_COLOR=(
-  default
-  white
-  red
-  green
-  blue
-  purple
-  black
-)
-
 function pick_color() {
   case "$1" in
   1) echo -e "\033["$2"7m" ;; # white
@@ -76,10 +70,10 @@ function pick_color() {
   esac
 }
 
-column1_background=$(pick_color ${column1_background} 4)
-column1_font_color=$(pick_color ${column1_font_color} 3)
-column2_background=$(pick_color ${column2_background} 4)
-column2_font_color=$(pick_color ${column2_font_color} 3)
+column1_background=$(pick_color ${color_list[0]} 4)
+column1_font_color=$(pick_color ${color_list[1]} 3)
+column2_background=$(pick_color ${color_list[2]} 4)
+column2_font_color=$(pick_color ${color_list[3]} 3)
 
 declare -a keys=(
   "HOSTNAME"
@@ -117,25 +111,29 @@ declare -a data=(
   "$(df /root | awk '/\/$/ {printf "%.2f MB", $3/1024}')"
   "$(df /root | awk '/\/$/ {printf "%.2f MB", $4/1024}')")
 
-# function print_data {
-for i in "${!keys[@]}"; do
-  echo -e "$column1_background$column1_font_color${keys[$i]}\033[0m" = "$column2_background$column2_font_color${data[$i]}\033[0m"
-done
-# }
+function print_data {
+  for i in "${!keys[@]}"; do
+    echo -e "$column1_background$column1_font_color${keys[$i]}\033[0m" = "$column2_background$column2_font_color${data[$i]}\033[0m"
+  done
+}
+
+function print_colors {
+  for ((i = 0; i < 2; i++)); do
+    echo -en "Column $((i + 1))" "background = "
+    if [ ${color_list[($i * 2)]} -eq ${default_color_list[($i * 2)]} ]; then
+      echo "default" "(${name_color[${color_list[($i * 2)]}]})"
+    else
+      echo "${color_list[($i * 2)]}" "(${name_color[${color_list[($i * 2)]}]})"
+    fi
+    echo -en "Column $((i + 1))" "font color = "
+    if [ ${color_list[($i * 2) + 1]} -eq ${default_color_list[($i * 2) + 1]} ]; then
+      echo "default" "(${name_color[${color_list[($i * 2) + 1]}]})"
+    else
+      echo "${color_list[($i * 2) + 1]}" "(${name_color[${color_list[($i * 2) + 1]}]})"
+    fi
+  done
+}
+
+print_data
 echo
-# function print_colors {
-for ((i = 0; i < 2; i++)); do
-  echo -en "Column $((i + 1))" "background = "
-  if [ ${color_list[($i * 2)]} -eq ${default_color_list[($i * 2)]} ]; then
-    echo "default" "(${NAME_COLOR[${color_list[($i * 2)]}]})"
-  else
-    echo "${color_list[($i * 2)]}" "(${NAME_COLOR[${color_list[($i * 2)]}]})"
-  fi
-  echo -en "Column $((i + 1))" "font color = "
-  if [ ${color_list[($i * 2) + 1]} -eq ${default_color_list[($i * 2) + 1]} ]; then
-    echo "default" "(${NAME_COLOR[${color_list[($i * 2) + 1]}]})"
-  else
-    echo "${color_list[($i * 2) + 1]}" "(${NAME_COLOR[${color_list[($i * 2) + 1]}]})"
-  fi
-done
-# }
+print_colors
