@@ -11,10 +11,10 @@ function pick_color() {
   esac
 }
 
-keys_color=$(pick_color $1 4)
-keys_bg_color=$(pick_color $2 3)
-data_color=$(pick_color $3 4)
-data_bg_color=$(pick_color $4 3)
+column1_background=$(pick_color $1 4)
+column1_font_color=$(pick_color $2 3)
+column2_background=$(pick_color $3 4)
+column2_font_color=$(pick_color $4 3)
 
 declare -a keys=(
   "HOSTNAME"
@@ -54,7 +54,7 @@ declare -a data=(
 
 function print_data {
   for i in "${!keys[@]}"; do
-    echo -e "$keys_color$keys_bg_color${keys[$i]}\033[0m" = "$data_color$data_bg_color${data[$i]}\033[0m"
+    echo -e "$column1_background$column1_font_color${keys[$i]}\033[0m" = "$column2_background$column2_font_color${data[$i]}\033[0m"
   done
 }
 
