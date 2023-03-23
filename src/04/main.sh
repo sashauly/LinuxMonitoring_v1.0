@@ -22,10 +22,10 @@ column2_font_color=${column2_font_color:=${default_column2_font_color}}
 #   6) echo -e "\033["$2"0m" ;; # black
 #   esac
 # }
-echo column1_background
-echo column1_font_color
-echo column2_background
-echo column2_font_color
+echo ${column1_background}
+echo ${column1_font_color}
+echo ${column2_background}
+echo ${column2_font_color}
 # column1_background=$(pick_color $1 4)
 # column1_font_color=$(pick_color $2 3)
 # column2_background=$(pick_color $3 4)
