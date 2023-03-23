@@ -4,13 +4,54 @@ source ./color.conf
 
 default_column1_background=6
 default_column1_font_color=1
-default_column2_background=2
-default_column2_font_color=4
+default_column2_background=3
+default_column2_font_color=2
 
 column1_background=${column1_background:=${default_column1_background}}
 column1_font_color=${column1_font_color:=${default_column1_font_color}}
 column2_background=${column2_background:=${default_column2_background}}
 column2_font_color=${column2_font_color:=${default_column2_font_color}}
+
+color_list=(
+  $column1_background
+  $column1_font_color
+  $column2_background
+  $column2_font_color
+)
+
+function default_colors() {
+  echo "Setting default colors..."
+  column1_background=${default_column1_background}
+  column1_font_color=${default_column1_font_color}
+  column2_background=${default_column2_background}
+  column2_font_color=${default_column2_font_color}
+}
+
+if [[ $# -gt 0 ]]; then
+  echo "Too few arguments"
+  default_colors
+elif [[ ${column1_background} -eq ${column1_font_color} || ${column2_background} -eq ${column2_font_color} ]]; then
+  echo "Color of text and background should not match"
+  default_colors
+fi
+
+for i in "${!color_list[@]}"; do
+  if [[ ${color_list[$i]} > 6 || ${color_list[$i]} < 1 ]]; then
+    echo "Incorrect arguments(color number must be in range 1-6)"
+    default_colors
+  elif [[ ${color_list[$i]} != *[[:digit:]]* ]]; then
+    echo "All arguments must be a digit number"
+    default_colors
+  fi
+done
+
+function print_colors() {
+  echo ${column1_background}
+  echo ${column1_font_color}
+  echo ${column2_background}
+  echo ${column2_font_color}
+}
+print_colors
 
 function pick_color() {
   case "$1" in
@@ -70,21 +111,4 @@ function print_data {
   done
 }
 
-# for i in "$@"; do
-#   if [[ "$i" > 6 || "$i" < 1 ]]; then
-#     echo "Incorrect arguments(color number is in range 1-6)"
-#     exit
-#   fi
-# done
-
-# if [ $# != 4 ]; then
-#   echo "Too few arguments"
-# else
-#   if [[ $1 -eq $2 || $3 -eq $4 ]]; then
-#     echo "Color of text and background should not match"
-#   else
-
 print_data
-
-#   fi
-# fi
