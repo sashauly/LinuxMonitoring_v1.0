@@ -1,11 +1,14 @@
 # #!/bin/bash
+
 dir_path="$1"
 
 if [[ -z $1 ]]; then
+  echo "String is empty"
   exit 1
 fi
 
 if [[ ! -d $1 ]]; then
+  echo "$dir_path is not a directory!"
   exit 1
 fi
 

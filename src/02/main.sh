@@ -1,4 +1,6 @@
 #!/bin/bash
+cd $(dirname $0)
+
 func() {
   echo "HOSTNAME = $(hostname)"
   echo "TIMEZONE =" "$(timedatectl | grep "Time zone" | awk '{print $3, $4, $5}')"
@@ -21,6 +23,10 @@ func() {
 func
 
 read -p "Write data into a file? (y/n) " choice
-if [[ $choice == "y" ]] || [[ $choice == "Y" ]]; then
+case $choice in
+y | Y)
+  echo "Writing a file..."
   func >./$(date +"%d_%m_%y_%H_%M_%S").status
-fi
+  ;;
+*) exit ;;
+esac

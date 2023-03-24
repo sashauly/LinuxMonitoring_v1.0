@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if [ -n $1 ] && (($# == 1)); then
   if [[ $1 =~ [[:digit:]] ]]; then
     echo "Incorrect input, digits are not allowed!"
